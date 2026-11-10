@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 ./scripts/setup.sh
-podman info >/dev/null
+"${TAXI_CONTAINER_ENGINE:-podman}" info >/dev/null
 ./scripts/compose.sh build
 # Recreate the whole local stack in dependency order, preserving named volumes.
 # Partial recreation can retain an old image when Podman container dependencies exist.
