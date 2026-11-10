@@ -12,6 +12,15 @@ with os.fdopen(fd,'w') as f:
 PYSETUP
   echo 'Created local .env with generated signing, database and broker secrets.'
 fi
-command -v podman >/dev/null || { echo 'Install Podman first.' >&2; exit 1; }
-command -v podman-compose >/dev/null || { echo 'Install podman-compose first.' >&2; exit 1; }
+case "${TAXI_CONTAINER_ENGINE:-podman}" in
+  podman)
+    command -v podman >/dev/null || { echo 'Install Podman first.' >&2; exit 1; }
+    command -v podman-compose >/dev/null || { echo 'Install podman-compose first.' >&2; exit 1; }
+    ;;
+  docker)
+    command -v docker >/dev/null || { echo 'Install Docker first.' >&2; exit 1; }
+    docker compose version >/dev/null || { echo 'Install the Docker Compose plugin first.' >&2; exit 1; }
+    ;;
+  *) echo 'Set TAXI_CONTAINER_ENGINE to podman or docker.' >&2; exit 1 ;;
+esac
 echo 'Ready. Start with ./scripts/up.sh'

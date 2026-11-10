@@ -2,9 +2,9 @@
 
 ## Toolchain
 
-.NET 8 SDK, Node 22+, Python 3, Podman, podman-compose. `global.json` selects the .NET 8.0.4xx feature band or a newer .NET 8 feature band. `scripts/dotnet.sh` uses a project-local SDK in `.tools/dotnet` when installed, otherwise the host SDK; CLI state and NuGet packages stay in `.tools`.
+.NET 8 SDK, Node 22+, Python 3, and either Podman with podman-compose or Docker with the Compose plugin. `global.json` selects the .NET 8.0.4xx feature band or a newer .NET 8 feature band. `scripts/dotnet.sh` uses a project-local SDK in `.tools/dotnet` when installed, otherwise the host SDK; CLI state and NuGet packages stay in `.tools`.
 
-Use Podman and podman-compose for all container operations in this repository. The implementing owner starts or rebuilds the demo with `./scripts/up.sh`, which runs `./scripts/wait-ready.sh`. The readiness check can also be run on its own. A reset with `./scripts/reset.sh --yes` deletes local demo volumes and requires explicit authorization.
+Use Podman with podman-compose by default, or select Docker with `export TAXI_CONTAINER_ENGINE=docker`. Use the same selection for every stack command. Each engine has separate containers and volumes, so stop the previous stack before switching; data is not migrated. The implementing owner starts or rebuilds the demo with `./scripts/up.sh`, which runs `./scripts/wait-ready.sh`. The readiness check can also be run on its own. A reset with `./scripts/reset.sh --yes` deletes local demo volumes and requires explicit authorization.
 
 Install .NET 8 using Microsoft's official installer or SDK packages. For a project-local installation, pass `--channel 8.0 --install-dir "$PWD/.tools/dotnet" --no-path` to the official dotnet-install script.
 
