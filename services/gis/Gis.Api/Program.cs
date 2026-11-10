@@ -20,4 +20,5 @@ api.MapGet("/trips",(GisStore zones)=>zones.LiveTrips()).RequireAuthorization(p=
 api.MapPost("/zones",async(ZoneRequest request,GisStore zones)=>Results.Created("/gis/zones",new{id=await zones.Save(null,request)})).RequireAuthorization(p=>p.RequireRole(Roles.GisAdmin));
 api.MapPut("/zones/{id:guid}",async(Guid id,ZoneRequest request,GisStore zones)=>new{id=await zones.Save(id,request)}).RequireAuthorization(p=>p.RequireRole(Roles.GisAdmin));
 api.MapDelete("/zones/{id:guid}",async(Guid id,Database db)=>await db.Execute("DELETE FROM zones WHERE id=$1",id)>0?Results.NoContent():Results.NotFound()).RequireAuthorization(p=>p.RequireRole(Roles.GisAdmin));
+app.MapOperations();
 app.Run();

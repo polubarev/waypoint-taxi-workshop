@@ -77,4 +77,5 @@ api.MapPost("/dispatch/{id:guid}/complete",async(Guid id,HttpContext context,Aut
 {
     Hosting.Require((await CurrentRoles(context,auth,cache)).Contains(Roles.Dispatcher));return await store.Change(id,context.User.UserId(),BookingStatus.Completed);
 });
+app.MapOperations();
 app.Run();
