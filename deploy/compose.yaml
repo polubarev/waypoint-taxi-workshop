@@ -1,0 +1,128 @@
+name: taxi-workshop
+x-api-env: &api-env
+  Jwt__Key: ${JWT_KEY:?Run ./scripts/setup.sh first}
+  Broker__Uri: amqp://${BROKER_USER}:${BROKER_PASSWORD}@broker:5672/
+  Broker__Exchange: taxi.events
+  Broker__QueuePrefix: taxi
+  Broker__RetryDelayMs: "1500"
+  Broker__MaxRetries: "3"
+x-db-env: &db-env
+  POSTGRES_USER: taxi
+  POSTGRES_PASSWORD: ${DB_PASSWORD:?Run ./scripts/setup.sh first}
+services:
+  auth-db:
+    image: docker.io/library/postgres:16-bookworm
+    environment:
+      <<: *db-env
+      POSTGRES_DB: auth
+    volumes: [auth-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U taxi -d auth"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  booking-db:
+    image: docker.io/library/postgres:16-bookworm
+    environment:
+      <<: *db-env
+      POSTGRES_DB: booking
+    volumes: [booking-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U taxi -d booking"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  gis-db:
+    image: localhost/taxi-workshop-postgis:dev
+    build:
+      context: ..
+      dockerfile: deploy/Containerfile.postgis
+    environment:
+      <<: *db-env
+      POSTGRES_DB: gis
+    volumes: [gis-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U taxi -d gis"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  broker:
+    image: docker.io/library/rabbitmq:4.1-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${BROKER_USER}
+      RABBITMQ_DEFAULT_PASS: ${BROKER_PASSWORD}
+    volumes: [broker-data:/var/lib/rabbitmq]
+    ports: ["127.0.0.1:15672:15672"]
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  auth:
+    image: localhost/taxi-workshop-auth:dev
+    build:
+      context: ..
+      dockerfile: deploy/Containerfile
+      args:
+        PROJECT: services/auth/Auth.Api/Auth.Api.csproj
+        DLL: Auth.Api.dll
+    environment:
+      <<: *api-env
+      ConnectionStrings__Database: Host=auth-db;Database=auth;Username=taxi;Password=${DB_PASSWORD}
+      Broker__ConsumerSuffix: auth.audit
+      Seed__Password: ${DEMO_PASSWORD}
+    depends_on:
+      auth-db: {condition: service_healthy}
+      broker: {condition: service_healthy}
+    restart: on-failure
+  gis:
+    image: localhost/taxi-workshop-gis:dev
+    build:
+      context: ..
+      dockerfile: deploy/Containerfile
+      args:
+        PROJECT: services/gis/Gis.Api/Gis.Api.csproj
+        DLL: Gis.Api.dll
+    environment:
+      <<: *api-env
+      ConnectionStrings__Database: Host=gis-db;Database=gis;Username=taxi;Password=${DB_PASSWORD}
+      Broker__ConsumerSuffix: gis.live
+    depends_on:
+      gis-db: {condition: service_healthy}
+      broker: {condition: service_healthy}
+    restart: on-failure
+  booking:
+    image: localhost/taxi-workshop-booking:dev
+    build:
+      context: ..
+      dockerfile: deploy/Containerfile
+      args:
+        PROJECT: services/booking/Booking.Api/Booking.Api.csproj
+        DLL: Booking.Api.dll
+    environment:
+      <<: *api-env
+      ConnectionStrings__Database: Host=booking-db;Database=booking;Username=taxi;Password=${DB_PASSWORD}
+      Broker__ConsumerSuffix: booking.permissions
+      Services__GisUrl: http://gis:8080/
+      Services__AuthUrl: http://auth:8080/
+    depends_on:
+      booking-db: {condition: service_healthy}
+      broker: {condition: service_healthy}
+      auth: {condition: service_started}
+      gis: {condition: service_started}
+    restart: on-failure
+  gateway:
+    image: localhost/taxi-workshop-gateway:dev
+    build:
+      context: ..
+      dockerfile: deploy/Containerfile.gateway
+    environment:
+      Jwt__Key: ${JWT_KEY}
+    ports: ["127.0.0.1:${APP_PORT:-8080}:8080"]
+    depends_on: [auth, gis, booking]
+    restart: on-failure
+volumes:
+  auth-data:
+  gis-data:
+  booking-data:
+  broker-data:

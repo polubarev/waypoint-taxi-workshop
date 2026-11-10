@@ -1,0 +1,22 @@
+{
+  "approval": {
+    "autoApprovalEnabled": true,
+    "allowed_permissions": ["read", "edit", "execute", "mcp", "todo", "mode", "skill"],
+    "permissionOptions": [{"groupId": "read", "enableOutsideWorkspace": false}],
+    "allowedExecutors": [{
+      "toolId": "execute_command",
+      "approvedCommands": [
+        "git status", "git diff", "git log", "git show", "git rev-parse",
+        "./scripts/test.sh auth", "./scripts/test.sh gis", "./scripts/test.sh booking",
+        "./scripts/test.sh all", "./scripts/test.sh contracts", "./scripts/test.sh api",
+        "./scripts/test.sh browser", "./scripts/test.sh web", "./scripts/test.sh e2e",
+        "./scripts/test.sh acceptance", "./scripts/up.sh", "./scripts/wait-ready.sh",
+        "./scripts/bob-review.sh", "./scripts/bob-check.sh build",
+        "./scripts/bob-check.sh syntax", "./scripts/bob-check.sh status",
+        "./scripts/bob-check.sh logs auth", "./scripts/bob-check.sh logs booking",
+        "./scripts/bob-check.sh logs gis", "./scripts/bob-check.sh logs gateway"
+      ],
+      "deniedCommands": []
+    }]
+  }
+}

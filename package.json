@@ -1,0 +1,17 @@
+{
+  "name": "taxi-workshop",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vendor": "node scripts/vendor.mjs",
+    "test:e2e": "playwright test",
+    "test:web": "node --test tests/e2e/ui-logic.test.mjs"
+  },
+  "dependencies": {
+    "leaflet": "1.9.4",
+    "leaflet-draw": "1.0.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}

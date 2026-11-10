@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "streamable-http",
+      "url": "https://mcp.context7.com/mcp",
+      "protocolNegotiation": "legacy",
+      "alwaysAllow": [
+        "resolve-library-id",
+        "query-docs"
+      ],
+      "disabled": false
+    },
+    "playwright": {
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/scripts/playwright-mcp.sh"
+      ],
+      "cwd": "${workspaceFolder}",
+      "alwaysAllow": [
+        "browser_snapshot",
+        "browser_take_screenshot",
+        "browser_console_messages",
+        "browser_close"
+      ],
+      "disabled": false
+    },
+    "github": {
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/scripts/github-review-mcp.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "groups": [
+        "reviewer"
+      ],
+      "alwaysAllow": [
+        "list_pull_requests",
+        "read_pull_request",
+        "read_pull_request_file"
+      ],
+      "disabled": false
+    }
+  }
+}

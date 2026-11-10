@@ -1,0 +1,19 @@
+# Local credentials stay available to the test scripts, not to file tools.
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+.git/
+.tools/
+node_modules/
+**/bin/
+**/obj/
+**/__pycache__/
+web/vendor/
+playwright-report/
+test-results/
+*.pdf
+# Current diff snapshots are deliberately readable by the read-only Reviewer.
+artifacts/*
+!artifacts/review/

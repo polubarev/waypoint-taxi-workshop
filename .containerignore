@@ -1,0 +1,8 @@
+.git
+.tools
+**/bin
+**/obj
+node_modules
+artifacts
+.env
+.vscode

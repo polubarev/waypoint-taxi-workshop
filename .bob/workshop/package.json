@@ -1,0 +1,8 @@
+{
+  "name": "taxi-workshop-bob-tools",
+  "private": true,
+  "description": "Pinned local tools for the Bob workshop; separate from application dependencies.",
+  "dependencies": {
+    "@playwright/mcp": "0.0.84"
+  }
+}

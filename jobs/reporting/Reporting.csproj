@@ -1,0 +1,1 @@
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType></PropertyGroup><ItemGroup><ProjectReference Include="../../shared/contracts/Shared.Contracts/Shared.Contracts.csproj" /></ItemGroup></Project>
