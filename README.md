@@ -2,6 +2,8 @@
 
 Waypoint is a local taxi booking application with synthetic demo data. Use it to practice cross-service changes, authorization, geospatial features, testing, and code review.
 
+New to the workshop? Start with the [participant setup guide](docs/participant-setup.md) to install the tools and check your machine before the session.
+
 ## Run on localhost
 
 Prerequisites: Python 3 and either Podman with podman-compose (and a running Podman machine on macOS/Windows), or Docker with the Compose plugin and a running Docker engine. Containers include the application runtime; host .NET and Node are needed only for host-side development/tests.

@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-const values=Object.fromEntries(readFileSync('.env','utf8').trim().split('\n').filter(l=>l.includes('=')&&!l.startsWith('#')).map(l=>{const i=l.indexOf('=');return [l.slice(0,i),l.slice(i+1)];}));
+const values=Object.fromEntries(readFileSync('.env','utf8').trim().split(/\r?\n/).filter(l=>l.includes('=')&&!l.startsWith('#')).map(l=>{const i=l.indexOf('=');return [l.slice(0,i),l.slice(i+1)];}));
 process.env.DEMO_PASSWORD=values.DEMO_PASSWORD;
 process.env.PLAYWRIGHT_BROWSERS_PATH=process.env.PLAYWRIGHT_BROWSERS_PATH||`${process.cwd()}/.tools/browsers`;
 export default defineConfig({

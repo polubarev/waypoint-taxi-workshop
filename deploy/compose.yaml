@@ -34,6 +34,7 @@ services:
       retries: 30
   gis-db:
     image: localhost/taxi-workshop-postgis:dev
+    platform: linux/amd64
     build:
       context: ..
       dockerfile: deploy/Containerfile.postgis
@@ -42,7 +43,7 @@ services:
       POSTGRES_DB: gis
     volumes: [gis-data:/var/lib/postgresql/data]
     healthcheck:
-      test: [CMD-SHELL, "pg_isready -U taxi -d gis"]
+      test: [CMD-SHELL, "PGPASSWORD=\"$$POSTGRES_PASSWORD\" psql -h 127.0.0.1 -U taxi -d gis -v ON_ERROR_STOP=1 -c \"LOAD 'postgis-3'\" >/dev/null"]
       interval: 3s
       timeout: 3s
       retries: 30
