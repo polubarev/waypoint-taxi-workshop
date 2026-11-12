@@ -44,9 +44,17 @@ public sealed class EventWorker(Database db, IConfiguration config, IEventHandle
                 }
                 state.Connected = true;
                 log.LogInformation("Broker connected: exchange={Exchange}, consumer={Queue}",exchange,queue);
+                var ackBatchSize = config.GetValue("Broker:AckBatchSize",50);
+                var ackInterval = TimeSpan.FromMilliseconds(config.GetValue("Broker:AckIntervalMs",300000));
+                ulong lastTag = 0; var pending = 0; var firstPending = DateTimeOffset.UtcNow;
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     await PublishOutbox(channel,exchange,stoppingToken);
+                    if (pending > 0 && (pending >= ackBatchSize || DateTimeOffset.UtcNow - firstPending >= ackInterval))
+                    {
+                        await channel.BasicAckAsync(lastTag,true,stoppingToken);
+                        pending = 0;
+                    }
                     var message = await channel.BasicGetAsync(queue,false,stoppingToken);
                     if (message is null) { await Task.Delay(150,stoppingToken); continue; }
                     try
@@ -62,7 +70,8 @@ public sealed class EventWorker(Database db, IConfiguration config, IEventHandle
                         await channel.BasicPublishAsync("",destination,true,properties,message.Body,stoppingToken);
                         log.LogWarning(error,"Event failed; sent to {Destination}, attempt {Attempt}",destination,count+1);
                     }
-                    await channel.BasicAckAsync(message.DeliveryTag,false,stoppingToken);
+                    if (pending++ == 0) firstPending = DateTimeOffset.UtcNow;
+                    lastTag = message.DeliveryTag;
                 }
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { break; }
