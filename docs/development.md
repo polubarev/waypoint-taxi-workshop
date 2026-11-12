@@ -2,9 +2,13 @@
 
 ## Toolchain
 
+For installation links and first-time setup, see the [participant setup guide](participant-setup.md).
+
 .NET 8 SDK, Node 22+, Python 3, and either Podman with podman-compose or Docker with the Compose plugin. `global.json` selects the .NET 8.0.4xx feature band or a newer .NET 8 feature band. `scripts/dotnet.sh` uses a project-local SDK in `.tools/dotnet` when installed, otherwise the host SDK; CLI state and NuGet packages stay in `.tools`.
 
 Use Podman with podman-compose by default, or select Docker with `export TAXI_CONTAINER_ENGINE=docker`. Use the same selection for every stack command. Each engine has separate containers and volumes, so stop the previous stack before switching; data is not migrated. The implementing owner starts or rebuilds the demo with `./scripts/up.sh`, which runs `./scripts/wait-ready.sh`. The readiness check can also be run on its own. A reset with `./scripts/reset.sh --yes` deletes local demo volumes and requires explicit authorization.
+
+On Windows, run the shell commands in Git Bash or WSL with Python 3 and the chosen container engine and Compose tool available in that environment. Docker Desktop's WSL integration must be enabled when using its Docker CLI from WSL. Shell scripts require LF line endings; after changing Git settings on an existing CRLF checkout, re-check out the scripts to apply `.gitattributes`.
 
 Install .NET 8 using Microsoft's official installer or SDK packages. For a project-local installation, pass `--channel 8.0 --install-dir "$PWD/.tools/dotnet" --no-path` to the official dotnet-install script.
 
@@ -42,6 +46,8 @@ The contract suite uses strict provider response/request fixtures at the HTTP-cl
 
 For bounded workshop diagnostics, use `./scripts/bob-check.sh build`, `syntax`, `status` or `logs auth` (also `booking`, `gis` or `gateway`). Each is a standalone command that preserves its result. Test engineer may use `syntax`, `status` and `logs`; builds and stack rebuilds remain the implementing owner's responsibility.
 
+After starting the stack, `pwsh ./scripts/check-postgis.ps1` verifies that the GIS database can load PostGIS and calculate a geographic distance. Use the same `TAXI_CONTAINER_ENGINE` selection as the stack.
+
 For a bug fix, first add a failing regression and capture its output, implement the fix, then rerun the same test plus affected checks. Never weaken tests to pass.
 
 ## Service solutions
@@ -55,6 +61,8 @@ The root `TaxiWorkshop.sln` builds everything. Each service also has a solution 
 ## Data and configuration
 
 Database schema and idempotent seed data are in each API project's `schema.sql` and seed method. This is an initial baseline schema, not a full migration framework. Preserve data with additive migration scripts when implementing exercises. Changing `CREATE TABLE IF NOT EXISTS` alone does not migrate an existing volume.
+
+The GIS database image uses PostgreSQL 16 and PostGIS 3.7 on Debian Trixie, pinned together in `deploy/Containerfile.postgis`. The pinned upstream image supports amd64; an ARM host needs compatible x86-64 container emulation. When moving an existing GIS volume from the old Debian Bookworm image, back up the database and plan the operating system and collation upgrade before starting it with the new image. PostgreSQL may require affected collation-dependent objects to be rebuilt and its collation version refreshed; a dump and restore is the safer migration for populated databases. Do not delete the volume as part of an image upgrade.
 
 `.env` is generated with mode 0600 and ignored. Do not paste it into prompts, logs, or issues. `deploy/compose.yaml` maps it into hierarchical .NET configuration. Service URLs, broker URI, exchange, queue prefix and consumer suffix come from configuration.
 
