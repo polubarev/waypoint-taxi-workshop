@@ -81,7 +81,7 @@ class Acceptance(unittest.TestCase):
         trip = self.create()
         self.assertEqual(200, self.api('manager',f"/booking/bookings/{trip['id']}/approve",'POST')[0])
         features = wait_for(lambda:self.live(trip['id']), 'approved trip reaches GIS')
-        self.assertEqual([34.77,32.06], features[0]['geometry']['coordinates'][0])
+        self.assertEqual([trip['pickup']['lat'],trip['pickup']['lng']], features[0]['geometry']['coordinates'][0])
         self.assertEqual('LineString',features[0]['geometry']['type'])
         status, dispatch = self.api('dispatcher','/booking/dispatch/approved')
         self.assertEqual(200,status)
