@@ -6,6 +6,8 @@ x-api-env: &api-env
   Broker__QueuePrefix: taxi
   Broker__RetryDelayMs: "1500"
   Broker__MaxRetries: "3"
+  Broker__AckBatchSize: "50"
+  Broker__AckIntervalMs: "300000"
 x-db-env: &db-env
   POSTGRES_USER: taxi
   POSTGRES_PASSWORD: ${DB_PASSWORD:?Run ./scripts/setup.sh first}
