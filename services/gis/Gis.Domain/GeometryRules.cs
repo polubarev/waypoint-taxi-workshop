@@ -25,3 +25,7 @@ public static class PlacePreview
 {
     public static double[] Position(GeoPoint point) => [point.Lat,point.Lng];
 }
+public static class TripLayer
+{
+    public static double[][] Line(GeoPoint pickup,GeoPoint dropoff) => [PlacePreview.Position(pickup),PlacePreview.Position(dropoff)];
+}

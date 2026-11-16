@@ -59,7 +59,7 @@ public sealed class GisStore(Database db)
         {
             var p=JsonSerializer.Deserialize<GeoPoint>(r.GetString(2),Wire.Json)!;
             var d=JsonSerializer.Deserialize<GeoPoint>(r.GetString(3),Wire.Json)!;
-            return new {type="Feature",id=r.GetInt64(0),properties=new { bookingId=r.GetGuid(1),regionId=r.GetString(4) },geometry=new { type="LineString",coordinates=new[]{p.Coordinates,d.Coordinates} }};
+            return new {type="Feature",id=r.GetInt64(0),properties=new { bookingId=r.GetGuid(1),regionId=r.GetString(4) },geometry=new { type="LineString",coordinates=TripLayer.Line(p,d) }};
         });
         return new {type="FeatureCollection",features=rows};
     }
