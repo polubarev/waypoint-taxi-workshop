@@ -4,6 +4,8 @@ Waypoint is a local taxi booking application with synthetic demo data. Use it to
 
 New to the workshop? Start with the [participant setup guide](docs/participant-setup.md) to install the tools and check your machine before the session.
 
+**Workshop participants, 18 November 2026:** your tasks, prompts and step-by-step instructions are on the [workshop wiki](https://github.com/polubarev/waypoint-taxi-workshop/wiki). The wiki is not part of the clone; open it in your browser.
+
 ## Run on localhost
 
 Prerequisites: Python 3 and either Podman with podman-compose (and a running Podman machine on macOS/Windows), or Docker with the Compose plugin and a running Docker engine. Containers include the application runtime; host .NET and Node are needed only for host-side development/tests.
@@ -50,9 +52,9 @@ npm run vendor
 
 ## Workshop exercises
 
-Start implementation exercises on your own branch from `main`. Use the task brief supplied for your session.
+Follow the [workshop wiki](https://github.com/polubarev/waypoint-taxi-workshop/wiki): start each task on your own branch from `main`.
 
-For the code review exercise, stay on `main` and review the changes on `review/operations-reporting`. The exercise branch is for review practice and should stay separate from your local demo.
+For the code review exercise, review the changes on `review/operations-reporting` compared with `main`, without checking that branch out. The exercise branch is for review practice and should stay separate from your local demo.
 
 ```sh
 git diff main...origin/review/operations-reporting
