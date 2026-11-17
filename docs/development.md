@@ -28,7 +28,7 @@ Lockfiles pin NuGet and npm dependencies. Container builds use the same projects
 | Auth unit tests | `./scripts/test.sh auth` |
 | GIS unit tests | `./scripts/test.sh gis` |
 | Booking unit tests | `./scripts/test.sh booking` |
-| Shared contracts + all service tests + frontend logic | `./scripts/test.sh all` |
+| Shared contracts + all service tests + frontend logic (no API or browser acceptance; add `e2e` for behavior changes) | `./scripts/test.sh all` |
 | Consumer contracts | `./scripts/test.sh contracts` |
 | Real API acceptance only | `./scripts/test.sh api` |
 | Browser acceptance only | `./scripts/test.sh browser` |

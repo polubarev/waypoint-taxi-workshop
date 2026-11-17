@@ -45,7 +45,7 @@ See [development](docs/development.md), [architecture](docs/architecture.md), an
 ```sh
 npm ci
 npm run vendor
-./scripts/test.sh all
+./scripts/test.sh all               # unit, contract and frontend logic; no API or browser tests
 ./scripts/test.sh contracts
 ./scripts/test.sh e2e             # requires running stack and Chromium
 ```
